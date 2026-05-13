@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_marketplace">
+
+    <fragment
+        android:id="@+id/navigation_marketplace"
+        android:name="com.example.brics_vm.ui.marketplace.MarketplaceFragment"
+        android:label="Маркетплейс"
+        tools:layout="@layout/fragment_marketplace" />
+
+    <fragment
+        android:id="@+id/navigation_courses"
+        android:name="com.example.brics_vm.ui.courses.CoursesFragment"
+        android:label="Курсы"
+        tools:layout="@layout/fragment_courses" />
+
+    <fragment
+        android:id="@+id/navigation_ranking"
+        android:name="com.example.brics_vm.ui.ranking.RankingFragment"
+        android:label="Рейтинг"
+        tools:layout="@layout/fragment_ranking" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.brics_vm.ui.profile.ProfileFragment"
+        android:label="Профиль"
+        tools:layout="@layout/fragment_profile">
+
+        <!-- ДОБАВЬТЕ ЭТОТ ACTION -->
+        <action
+            android:id="@+id/action_profile_to_createCourse"
+            app:destination="@id/createCourseFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/createCourseFragment"
+        android:name="com.example.brics_vm.ui.teacher.CreateCourseFragment"
+        android:label="Создание курса"
+        tools:layout="@layout/fragment_create_course">
+
+        <!-- ДОБАВЬТЕ ЭТОТ ACTION -->
+        <action
+            android:id="@+id/action_createCourse_to_teacherLessons"
+            app:destination="@id/teacherLessonsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/teacherLessonsFragment"
+        android:name="com.example.brics_vm.ui.teacher.TeacherLessonsFragment"
+        android:label="Редактирование курса"
+        tools:layout="@layout/fragment_teacher_lessons">
+
+        <action
+            android:id="@+id/action_teacherLessons_to_addQuestions"
+            app:destination="@id/addQuestionFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addQuestionFragment"
+        android:name="com.example.brics_vm.ui.teacher.AddQuestionFragment"
+        android:label="Добавление вопроса"
+        tools:layout="@layout/fragment_add_question">
+
+        <action
+            android:id="@+id/action_addQuestions_to_teacherLessons"
+            app:destination="@id/teacherLessonsFragment" />
+
+    </fragment>
+
+</navigation>

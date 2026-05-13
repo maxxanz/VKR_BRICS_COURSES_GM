@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Создание курса"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp" />
+
+        <EditText
+            android:id="@+id/course_title_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Название курса *"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@android:drawable/editbox_background" />
+
+        <!-- НОВОЕ ПОЛЕ: Предмет (ручной ввод) -->
+        <EditText
+            android:id="@+id/course_subject_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Предмет курса * (например: Математика, Физика, Программирование)"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@android:drawable/editbox_background" />
+
+        <EditText
+            android:id="@+id/course_description_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Описание курса"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:background="@android:drawable/editbox_background" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/course_number_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Номер курса (1-6)"
+                android:padding="12dp"
+                android:layout_marginEnd="8dp"
+                android:inputType="number"
+                android:background="@android:drawable/editbox_background" />
+
+            <EditText
+                android:id="@+id/course_duration_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Длительность (мин)"
+                android:padding="12dp"
+                android:layout_marginStart="8dp"
+                android:inputType="number"
+                android:background="@android:drawable/editbox_background" />
+
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/course_image_url_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="URL изображения (опционально)"
+            android:padding="12dp"
+            android:layout_marginTop="12dp"
+            android:background="@android:drawable/editbox_background" />
+
+        <Button
+            android:id="@+id/create_course_button"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:text="СОЗДАТЬ КУРС"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="@color/colorGreeny" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="* — обязательные поля"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="8dp"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</ScrollView>

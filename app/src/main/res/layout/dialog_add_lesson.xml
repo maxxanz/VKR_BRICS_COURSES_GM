@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/lesson_title_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Название урока *"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@android:drawable/editbox_background" />
+
+    <EditText
+        android:id="@+id/lesson_content_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Текстовый материал"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"
+        android:inputType="textMultiLine"
+        android:minLines="3"
+        android:background="@android:drawable/editbox_background" />
+
+    <EditText
+        android:id="@+id/lesson_video_url_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ссылка на видео (опционально)"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"
+        android:background="@android:drawable/editbox_background" />
+
+    <EditText
+        android:id="@+id/lesson_duration_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Длительность (минуты)"
+        android:padding="12dp"
+        android:inputType="number"
+        android:background="@android:drawable/editbox_background" />
+
+</LinearLayout>

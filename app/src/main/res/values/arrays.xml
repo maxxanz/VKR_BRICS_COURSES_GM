@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="user_types">
+        <item>student</item>
+        <item>teacher</item>
+        <item>admin</item>
+        <item>guest</item>
+    </string-array>
+</resources>
