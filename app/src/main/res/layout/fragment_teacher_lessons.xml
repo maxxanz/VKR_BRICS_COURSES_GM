@@ -21,7 +21,18 @@
         android:text="+ ДОБАВИТЬ УРОК"
         android:textSize="14sp"
         android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/colorAccent" />
+        android:backgroundTint="@color/colorPrimaryLight" />
+
+    <!-- НОВАЯ КНОПКА ДЛЯ BRICS УРОКА -->
+    <Button
+        android:id="@+id/add_brics_lesson_button"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="🌍 ДОБАВИТЬ BRICS УРОК"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/colorAccentLight"
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/add_test_button"
@@ -30,7 +41,7 @@
         android:text="🎯 ДОБАВИТЬ ТЕСТ"
         android:textSize="14sp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/colorGreeny" />
+        android:backgroundTint="#4CAF50" />
 
     <TextView
         android:layout_width="match_parent"

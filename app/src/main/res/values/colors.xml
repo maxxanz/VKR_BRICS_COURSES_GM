@@ -14,6 +14,7 @@
     <color name="colorGreenyDark">#7DB35B</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#D95C2C</color>
+    <color name="colorAccentLight">#B3D95C2C</color>
     <color name="colorPrimaryLight">#7986CB</color>
 
     <!-- Цвета для нижней навигации -->

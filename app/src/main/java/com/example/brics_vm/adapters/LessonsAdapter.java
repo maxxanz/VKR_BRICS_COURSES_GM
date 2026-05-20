@@ -9,6 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.brics_vm.R;
 import com.example.brics_vm.models.Lesson;
@@ -51,19 +53,47 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonVi
         holder.title.setText(lesson.getTitle());
         holder.duration.setText(lesson.getDuration() + " мин");
 
+        // Проверяем, является ли урок BRICS уроком
+        // Используем флаг в названии или отдельное поле
+        boolean isBricsLesson = lesson.getTitle() != null &&
+                (lesson.getTitle().contains("🌍") ||
+                        lesson.getTitle().toLowerCase().contains("brics") ||
+                        (position == lessons.size() - 1 && lessons.size() > 1)); // последний урок
+
+        if (isBricsLesson) {
+            // Показываем бейдж BRICS
+            holder.bricsBadge.setVisibility(View.VISIBLE);
+            // Меняем цвет карточки
+            holder.cardView.setCardBackgroundColor(
+                    ContextCompat.getColor(context, R.color.colorAccent));
+            // Меняем иконку
+            holder.lessonIcon.setImageResource(R.drawable.human);
+        } else {
+            holder.bricsBadge.setVisibility(View.GONE);
+            holder.cardView.setCardBackgroundColor(
+                    ContextCompat.getColor(context, android.R.color.white));
+            // Стандартная иконка для обычных уроков
+            if (completedLessonIds != null && completedLessonIds.contains(lesson.getId())) {
+                holder.lessonIcon.setImageResource(R.drawable.ic_check_circle);
+            } else {
+                holder.lessonIcon.setImageResource(R.drawable.ic_play_circle);
+            }
+        }
+
         if (completedLessonIds != null && completedLessonIds.contains(lesson.getId())) {
             holder.checkIcon.setVisibility(View.VISIBLE);
-            holder.lessonIcon.setImageResource(R.drawable.ic_check_circle);
+            if (!isBricsLesson) {
+                holder.lessonIcon.setImageResource(R.drawable.ic_check_circle);
+            }
         } else {
             holder.checkIcon.setVisibility(View.GONE);
-            holder.lessonIcon.setImageResource(R.drawable.ic_play_circle);
         }
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, LessonDetailActivity.class);
             intent.putExtra(LessonDetailActivity.EXTRA_LESSON, lesson);
             intent.putExtra(LessonDetailActivity.EXTRA_COURSE_ID, courseId);
-            ((AppCompatActivity) context).startActivityForResult(intent, 100); // 100 - requestCode
+            ((AppCompatActivity) context).startActivityForResult(intent, 100);
         });
     }
 
@@ -75,6 +105,8 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonVi
     static class LessonViewHolder extends RecyclerView.ViewHolder {
         ImageView lessonIcon, checkIcon;
         TextView title, duration;
+        TextView bricsBadge;
+        CardView cardView;
 
         LessonViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -82,6 +114,8 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonVi
             checkIcon = itemView.findViewById(R.id.check_icon);
             title = itemView.findViewById(R.id.lesson_title);
             duration = itemView.findViewById(R.id.lesson_duration);
+            bricsBadge = itemView.findViewById(R.id.brics_badge);
+            cardView = (CardView) itemView;
         }
     }
 }

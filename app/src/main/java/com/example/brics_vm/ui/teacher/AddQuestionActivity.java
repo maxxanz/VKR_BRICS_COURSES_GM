@@ -1,5 +1,6 @@
 package com.example.brics_vm.ui.teacher;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -7,6 +8,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.brics_vm.MainActivity;
 import com.example.brics_vm.R;
 import com.example.brics_vm.api.NstuClient;
 import com.example.brics_vm.api.NstuApi;
@@ -43,7 +45,24 @@ public class AddQuestionActivity extends AppCompatActivity {
         nstuApi = NstuClient.getClient();
 
         addBtn.setOnClickListener(v -> addQuestion());
-        finishBtn.setOnClickListener(v -> finish());
+
+        // ИСПРАВЛЕННАЯ КНОПКА ЗАВЕРШЕНИЯ
+        finishBtn.setOnClickListener(v -> {
+            // Показываем подтверждение
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle("Завершение")
+                    .setMessage("Тест будет сохранён с текущими вопросами. Вы уверены?")
+                    .setPositiveButton("Да", (dialog, which) -> {
+                        // Переход на главный экран с очисткой стека
+                        Intent intent = new Intent(AddQuestionActivity.this, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.putExtra("navigate_to_marketplace", true);
+                        startActivity(intent);
+                        finish();
+                    })
+                    .setNegativeButton("Нет", null)
+                    .show();
+        });
     }
 
     private void initViews() {
