@@ -90,10 +90,9 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonVi
         }
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, LessonDetailActivity.class);
-            intent.putExtra(LessonDetailActivity.EXTRA_LESSON, lesson);
-            intent.putExtra(LessonDetailActivity.EXTRA_COURSE_ID, courseId);
-            ((AppCompatActivity) context).startActivityForResult(intent, 100);
+            if (itemClickListener != null) {
+                itemClickListener.onItemClick(lesson);
+            }
         });
     }
 
@@ -117,5 +116,14 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonVi
             bricsBadge = itemView.findViewById(R.id.brics_badge);
             cardView = (CardView) itemView;
         }
+    }
+    private OnItemClickListener itemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.itemClickListener = listener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Lesson lesson);
     }
 }

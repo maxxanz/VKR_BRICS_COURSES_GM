@@ -66,6 +66,18 @@ public class LessonsActivity extends AppCompatActivity {
 
         initViews();
         setupToolbar();
+
+        // Инициализация адаптера и установка слушателя кликов
+        adapter = new LessonsAdapter(this, course.getId());
+        adapter.setOnItemClickListener(lesson -> {
+            Intent intent = new Intent(LessonsActivity.this, LessonDetailActivity.class);
+            intent.putExtra(LessonDetailActivity.EXTRA_LESSON, lesson);
+            intent.putExtra(LessonDetailActivity.EXTRA_COURSE_ID, course.getId());
+            startActivityForResult(intent, REQUEST_LESSON_DETAIL);
+        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+
         loadLessons();
         loadProgress();
     }

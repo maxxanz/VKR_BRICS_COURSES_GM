@@ -20,6 +20,7 @@ import com.example.brics_vm.api.NstuClient;
 import com.example.brics_vm.api.NstuApi;
 import com.example.brics_vm.models.Lesson;
 import com.example.brics_vm.models.TestResponse;
+import com.example.brics_vm.ui.lessons.LessonDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,16 @@ public class TeacherLessonsFragment extends Fragment {
     private int courseId;
     private List<Lesson> lessons = new ArrayList<>();
     private String teacherCountry;
-    private boolean isBricsLessonAdded = false; // Флаг, добавлен ли уже BRICS урок
+    private boolean isBricsLessonAdded = false;
+
+    // Роль пользователя
+    private String userRole; // "teacher" или "student"
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadLessons(); // перезагружаем уроки
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -52,13 +62,21 @@ public class TeacherLessonsFragment extends Fragment {
 
         SharedPreferences prefs = requireActivity().getSharedPreferences("app_prefs", requireContext().MODE_PRIVATE);
         teacherCountry = prefs.getString("user_country", "стране");
+        userRole = prefs.getString("user_type", "student"); // "teacher" или "student"
 
         initViews(view);
         loadLessons();
 
-        addLessonButton.setOnClickListener(v -> showAddLessonDialog(false));
-        addBricsLessonButton.setOnClickListener(v -> checkBeforeAddBricsLesson());
-        addTestButton.setOnClickListener(v -> createTestForCourse());
+        // Показываем кнопки добавления только для преподавателя
+        if (!userRole.equals("teacher")) {
+            addLessonButton.setVisibility(View.GONE);
+            addBricsLessonButton.setVisibility(View.GONE);
+            addTestButton.setVisibility(View.GONE);
+        } else {
+            addLessonButton.setOnClickListener(v -> showAddLessonDialog(false));
+            addBricsLessonButton.setOnClickListener(v -> checkBeforeAddBricsLesson());
+            addTestButton.setOnClickListener(v -> createTestForCourse());
+        }
 
         return view;
     }
@@ -72,6 +90,27 @@ public class TeacherLessonsFragment extends Fragment {
         adapter = new LessonsAdapter(getContext(), courseId);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
+
+        // Настройка клика по уроку в зависимости от роли
+        adapter.setOnItemClickListener(lesson -> {
+            if (userRole.equals("teacher")) {
+                // Преподаватель → редактирование
+                Intent intent = new Intent(getContext(), EditLessonActivity.class);
+                intent.putExtra("lesson_id", lesson.getId());
+                intent.putExtra("course_id", courseId);
+                intent.putExtra("lesson_title", lesson.getTitle());
+                intent.putExtra("lesson_content", lesson.getTextContent());
+                intent.putExtra("lesson_video_url", lesson.getVideoUrl());
+                intent.putExtra("lesson_duration", lesson.getDuration());
+                startActivity(intent);
+            } else {
+                // Студент → просмотр
+                Intent intent = new Intent(getContext(), LessonDetailActivity.class);
+                intent.putExtra("lesson_id", lesson.getId());
+                intent.putExtra("course_id", courseId);
+                startActivity(intent);
+            }
+        });
     }
 
     private void loadLessons() {
@@ -83,17 +122,18 @@ public class TeacherLessonsFragment extends Fragment {
                     lessons = response.body();
                     adapter.setLessons(lessons);
 
-                    // Проверяем, есть ли уже BRICS урок
-                    for (Lesson lesson : lessons) {
-                        if (lesson.getTitle() != null &&
-                                (lesson.getTitle().startsWith("🌍") ||
-                                        lesson.getTitle().contains("BRICS"))) {
-                            isBricsLessonAdded = true;
-                            // Если BRICS урок уже есть, блокируем кнопку добавления обычных уроков
-                            addLessonButton.setEnabled(false);
-                            addLessonButton.setText("✅ УРОКИ ДОБАВЛЕНЫ");
-                            addLessonButton.setAlpha(0.6f);
-                            break;
+                    // Проверяем, есть ли уже BRICS урок (только для преподавателя)
+                    if (userRole.equals("teacher")) {
+                        for (Lesson lesson : lessons) {
+                            if (lesson.getTitle() != null &&
+                                    (lesson.getTitle().startsWith("🌍") ||
+                                            lesson.getTitle().contains("BRICS"))) {
+                                isBricsLessonAdded = true;
+                                addLessonButton.setEnabled(false);
+                                addLessonButton.setText("✅ УРОКИ ДОБАВЛЕНЫ");
+                                addLessonButton.setAlpha(0.6f);
+                                break;
+                            }
                         }
                     }
                 }
@@ -105,8 +145,11 @@ public class TeacherLessonsFragment extends Fragment {
         });
     }
 
+    // Остальные методы (checkBeforeAddBricsLesson, showAddLessonDialog, createLesson, createTestForCourse)
+    // остаются без изменений, так как они вызываются только для преподавателя
+    // ... (копируйте их из вашего существующего файла)
+
     private void checkBeforeAddBricsLesson() {
-        // Если BRICS урок уже существует, показываем предупреждение
         if (isBricsLessonAdded) {
             new AlertDialog.Builder(getContext())
                     .setTitle("⚠️ Внимание")
@@ -118,21 +161,17 @@ public class TeacherLessonsFragment extends Fragment {
             return;
         }
 
-        // Проверяем, есть ли хотя бы один обычный урок
         if (lessons.isEmpty()) {
             new AlertDialog.Builder(getContext())
                     .setTitle("❌ Нельзя создать BRICS урок")
                     .setMessage("Сначала добавьте хотя бы один обычный урок.\n\n" +
                             "BRICS урок должен быть заключительным и основываться на материале курса.")
-                    .setPositiveButton("Добавить урок", (dialog, which) -> {
-                        showAddLessonDialog(false);
-                    })
+                    .setPositiveButton("Добавить урок", (dialog, which) -> showAddLessonDialog(false))
                     .setNegativeButton("Отмена", null)
                     .show();
             return;
         }
 
-        // Проверяем, что все обычные уроки не пустые (имеют название и содержание)
         boolean hasEmptyLesson = false;
         for (Lesson lesson : lessons) {
             if (lesson.getTitle() == null || lesson.getTitle().isEmpty() ||
@@ -152,7 +191,6 @@ public class TeacherLessonsFragment extends Fragment {
             return;
         }
 
-        // Всё хорошо, показываем предупреждение, что после создания BRICS урока нельзя будет добавить обычные уроки
         new AlertDialog.Builder(getContext())
                 .setTitle("🌍 Создание BRICS урока")
                 .setMessage("Вы создаёте заключительный BRICS урок:\n\n" +
@@ -160,9 +198,7 @@ public class TeacherLessonsFragment extends Fragment {
                         "• ПОСЛЕ СОЗДАНИЯ этого урока вы НЕ СМОЖЕТЕ добавить обычные уроки\n" +
                         "• BRICS урок должен быть последним в курсе\n\n" +
                         "Вы уверены, что все обычные уроки добавлены и заполнены?")
-                .setPositiveButton("✅ Да, создать BRICS урок", (dialog, which) -> {
-                    showAddLessonDialog(true);
-                })
+                .setPositiveButton("✅ Да, создать BRICS урок", (dialog, which) -> showAddLessonDialog(true))
                 .setNegativeButton("❌ Отмена, добавить ещё уроки", null)
                 .show();
     }
@@ -180,7 +216,7 @@ public class TeacherLessonsFragment extends Fragment {
             String defaultTitle = "🌍 " + teacherCountry + ". Применение курса.";
             titleInput.setText(defaultTitle);
             titleInput.setHint("Название BRICS урока");
-            titleInput.setEnabled(false); // Блокируем изменение названия для BRICS урока
+            titleInput.setEnabled(false);
             contentInput.setHint("Расскажите, как тема курса применяется в " + teacherCountry +
                     "\n\nПриведите примеры из местной практики\n" +
                     "Предложите идеи для международного сотрудничества\n" +

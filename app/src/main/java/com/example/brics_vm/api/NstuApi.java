@@ -12,6 +12,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.*;
 import java.util.Map;
+import okhttp3.MultipartBody;
+
 
 public interface NstuApi {
 
@@ -142,5 +144,15 @@ public interface NstuApi {
     @POST("rest/v1/test_questions")
     Call<TestQuestion> createQuestion(@Body TestQuestion question);
 
+    // ========== ИМПОРТ SYLLABUS ==========
 
+    @Multipart
+    @POST("rest/v1/import_syllabus")
+    Call<Map<String, Object>> importSyllabus(
+            @Part("course_id") int courseId,
+            @Part MultipartBody.Part file
+    );
+
+    @PATCH("rest/v1/lessons/{id}")
+    Call<Lesson> updateLesson(@Path("id") int lessonId, @Body Lesson lesson);
 }

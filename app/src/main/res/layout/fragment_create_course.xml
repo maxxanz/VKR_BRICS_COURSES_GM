@@ -27,12 +27,11 @@
             android:layout_marginBottom="12dp"
             android:background="@android:drawable/editbox_background" />
 
-        <!-- НОВОЕ ПОЛЕ: Предмет (ручной ввод) -->
         <EditText
             android:id="@+id/course_subject_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Предмет курса * (например: Математика, Физика, Программирование)"
+            android:hint="Предмет курса *"
             android:padding="12dp"
             android:layout_marginBottom="12dp"
             android:background="@android:drawable/editbox_background" />
@@ -90,11 +89,19 @@
             android:id="@+id/create_course_button"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:text="СОЗДАТЬ КУРС"
             android:textSize="16sp"
             android:textStyle="bold"
             android:backgroundTint="@color/colorGreeny" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
 
         <TextView
             android:layout_width="match_parent"
