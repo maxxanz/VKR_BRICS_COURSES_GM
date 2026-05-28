@@ -2,6 +2,7 @@ package com.example.brics_vm.api;
 
 import com.example.brics_vm.models.CountryRanking;
 import com.example.brics_vm.models.Course;
+import com.example.brics_vm.models.Suggestion;
 import com.example.brics_vm.models.TestResponse;
 import com.example.brics_vm.models.User;
 import com.example.brics_vm.models.UserCourse;
@@ -155,4 +156,36 @@ public interface NstuApi {
 
     @PATCH("rest/v1/lessons/{id}")
     Call<Lesson> updateLesson(@Path("id") int lessonId, @Body Lesson lesson);
+
+    // ========== ПРЕДЛОЖЕНИЯ ДОПОЛНЕНИЙ ==========
+
+    // Отправить предложение дополнить курс
+    @POST("rest/v1/courses/{course_id}/suggestions")
+    Call<Suggestion> sendSuggestion(
+            @Path("course_id") int courseId,
+            @Body Suggestion suggestion
+    );
+
+    // Получить все предложения для курсов текущего преподавателя (как создателя)
+    @GET("rest/v1/teacher/suggestions")
+    Call<List<Suggestion>> getMyCourseSuggestions(@Query("teacher_id") int teacherId);
+
+    // Одобрить предложение
+    @PATCH("rest/v1/suggestions/{suggestion_id}/approve")
+    Call<Void> approveSuggestion(
+            @Path("suggestion_id") int suggestionId,
+            @Query("teacher_id") int teacherId
+    );
+
+    // Отклонить предложение
+    @PATCH("rest/v1/suggestions/{suggestion_id}/reject")
+    Call<Void> rejectSuggestion(
+            @Path("suggestion_id") int suggestionId,
+            @Query("teacher_id") int teacherId,
+            @Body Map<String, String> body
+    );
+
+    // Получить список дополнений для курса (одобренные уроки)
+    @GET("rest/v1/courses/{course_id}/contributions")
+    Call<List<Lesson>> getCourseContributions(@Path("course_id") int courseId);
 }

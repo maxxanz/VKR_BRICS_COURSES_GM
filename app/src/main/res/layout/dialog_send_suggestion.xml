@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/suggestion_title_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Название урока"
+        android:inputType="textCapSentences"/>
+
+    <EditText
+        android:id="@+id/suggestion_content_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Содержание урока"
+        android:minLines="5"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:layout_marginTop="12dp"/>
+
+    <EditText
+        android:id="@+id/suggestion_video_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Ссылка на видео (необязательно)"
+        android:inputType="textUri"
+        android:layout_marginTop="12dp"/>
+
+    <EditText
+        android:id="@+id/suggestion_duration_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Длительность в минутах"
+        android:inputType="number"
+        android:layout_marginTop="12dp"/>
+
+</LinearLayout>

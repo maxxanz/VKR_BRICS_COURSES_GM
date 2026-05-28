@@ -265,6 +265,8 @@ public class TeacherLessonsFragment extends Fragment {
 
         nstuApi = NstuClient.getClient();
 
+        newLesson.setBrics(isBrics);
+
         Toast.makeText(getContext(), "Создание урока...", Toast.LENGTH_SHORT).show();
 
         nstuApi.createLesson(newLesson).enqueue(new Callback<Lesson>() {

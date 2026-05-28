@@ -47,6 +47,7 @@ public class LessonDetailActivity extends AppCompatActivity {
 
         lesson = (Lesson) getIntent().getSerializableExtra(EXTRA_LESSON);
         courseId = getIntent().getIntExtra(EXTRA_COURSE_ID, -1);
+        boolean isPreviewMode = getIntent().getBooleanExtra("is_preview_mode", false);
 
         if (lesson == null) {
             finish();
@@ -59,7 +60,19 @@ public class LessonDetailActivity extends AppCompatActivity {
         initViews();
         setupToolbar();
         displayLesson();
-        checkIfCompleted();
+
+        // Если режим предпросмотра — скрываем кнопки "Отметить пройденным"
+        if (isPreviewMode) {
+            completeButton.setVisibility(View.GONE);
+            uncompleteButton.setVisibility(View.GONE);
+
+            // Можно добавить индикатор, что это предпросмотр
+            if (toolbar != null) {
+                toolbar.setTitle("📋 Предпросмотр предложения");
+            }
+        } else {
+            checkIfCompleted();
+        }
     }
 
     private void initViews() {
@@ -128,14 +141,10 @@ public class LessonDetailActivity extends AppCompatActivity {
     private void displayLesson() {
         String videoUrl = lesson.getVideoUrl();
 
-        // Если есть URL видео - показываем кнопку внешнего плеера и скрываем WebView
         if (videoUrl != null && !videoUrl.isEmpty()) {
-            // Скрываем WebView, так как он не работает с VK Video
             videoWebView.setVisibility(View.GONE);
-            // Показываем кнопку внешнего плеера
             playVideoButton.setVisibility(View.VISIBLE);
         } else {
-            // Если видео нет - скрываем оба
             videoWebView.setVisibility(View.GONE);
             if (playVideoButton != null) {
                 playVideoButton.setVisibility(View.GONE);
@@ -144,7 +153,8 @@ public class LessonDetailActivity extends AppCompatActivity {
 
         String content = lesson.getTextContent();
         if (content != null && !content.isEmpty()) {
-            textContent.setText(android.text.Html.fromHtml(content, android.text.Html.FROM_HTML_MODE_COMPACT));
+            // ВАРИАНТ 1: Просто устанавливаем текст (сохраняет переносы строк)
+            textContent.setText(content);
         }
     }
 

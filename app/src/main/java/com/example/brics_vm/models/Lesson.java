@@ -3,7 +3,7 @@ package com.example.brics_vm.models;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
-public class Lesson implements Serializable {  // ← добавьте implements Serializable
+public class Lesson implements Serializable {
     private int id;
 
     @SerializedName("course_id")
@@ -21,7 +21,24 @@ public class Lesson implements Serializable {  // ← добавьте implement
     private int order;
     private int duration;
 
-    // Геттеры и сеттеры...
+    // ========== НОВЫЕ ПОЛЯ ==========
+    @SerializedName("is_brics")
+    private boolean isBrics;
+
+    @SerializedName("is_contribution")
+    private boolean isContribution;
+
+    @SerializedName("contributor_first_name")
+    private String contributorFirstName;
+
+    @SerializedName("contributor_last_name")
+    private String contributorLastName;
+
+    @SerializedName("contributor_country")
+    private String contributorCountry;
+    // ================================
+
+    // Геттеры и сеттеры существующие
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -45,4 +62,32 @@ public class Lesson implements Serializable {  // ← добавьте implement
 
     public int getDuration() { return duration; }
     public void setDuration(int duration) { this.duration = duration; }
+
+    // ========== НОВЫЕ ГЕТТЕРЫ И СЕТТЕРЫ ==========
+    public boolean isBrics() { return isBrics; }
+    public void setBrics(boolean brics) { isBrics = brics; }
+
+    public boolean isContribution() { return isContribution; }
+    public void setContribution(boolean contribution) { isContribution = contribution; }
+
+    public String getContributorFirstName() { return contributorFirstName; }
+    public void setContributorFirstName(String contributorFirstName) { this.contributorFirstName = contributorFirstName; }
+
+    public String getContributorLastName() { return contributorLastName; }
+    public void setContributorLastName(String contributorLastName) { this.contributorLastName = contributorLastName; }
+
+    public String getContributorCountry() { return contributorCountry; }
+    public void setContributorCountry(String contributorCountry) { this.contributorCountry = contributorCountry; }
+
+    public String getContributorFullName() {
+        if (contributorFirstName != null && contributorLastName != null) {
+            return contributorFirstName + " " + contributorLastName;
+        } else if (contributorFirstName != null) {
+            return contributorFirstName;
+        } else if (contributorLastName != null) {
+            return contributorLastName;
+        }
+        return "";
+    }
+    // ============================================
 }

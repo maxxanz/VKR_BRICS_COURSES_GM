@@ -3,10 +3,14 @@ package com.example.brics_vm.ui.coursedetail;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.bumptech.glide.Glide;
@@ -14,6 +18,7 @@ import com.example.brics_vm.R;
 import com.example.brics_vm.api.NstuClient;
 import com.example.brics_vm.api.NstuApi;
 import com.example.brics_vm.models.Course;
+import com.example.brics_vm.models.Suggestion;
 import com.example.brics_vm.models.UserCourse;
 import com.example.brics_vm.ui.lessons.LessonsActivity;
 import java.util.List;
@@ -41,6 +46,8 @@ public class CourseDetailActivity extends AppCompatActivity {
     private NstuApi nstuApi;
     private int userId;
 
+    private Button suggestButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,10 +65,14 @@ public class CourseDetailActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
         userId = prefs.getInt("user_id", -1);
 
+        // Инициализация View (включая suggestButton)
         initViews();
         setupToolbar();
         displayCourseInfo();
         checkUserCourseStatus();
+
+        // Проверка для кнопки "Предложить урок" (после инициализации suggestButton)
+        checkIfCanSuggest();
     }
 
     private void initViews() {
@@ -76,6 +87,8 @@ public class CourseDetailActivity extends AppCompatActivity {
         startButton = findViewById(R.id.start_button);
         continueButton = findViewById(R.id.continue_button);
         completedButton = findViewById(R.id.completed_button);
+
+        suggestButton = findViewById(R.id.suggest_button);
 
         startButton.setOnClickListener(v -> startCourse());
         continueButton.setOnClickListener(v -> goToLessons());
@@ -214,5 +227,77 @@ public class CourseDetailActivity extends AppCompatActivity {
         Intent intent = new Intent(CourseDetailActivity.this, LessonsActivity.class);
         intent.putExtra(LessonsActivity.EXTRA_COURSE, course);
         startActivity(intent);
+    }
+
+    private void checkIfCanSuggest() {
+        SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+        String userType = prefs.getString("user_type", "");
+        int currentUserId = prefs.getInt("user_id", -1);
+
+        // Если преподаватель и не создатель курса
+        if ("teacher".equals(userType) && currentUserId != course.getCreatorId()) {
+            suggestButton.setVisibility(View.VISIBLE);
+            suggestButton.setOnClickListener(v -> openSuggestionDialog());
+        } else {
+            suggestButton.setVisibility(View.GONE);
+        }
+    }
+
+    private void openSuggestionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_send_suggestion, null);
+
+        EditText titleInput = dialogView.findViewById(R.id.suggestion_title_input);
+        EditText contentInput = dialogView.findViewById(R.id.suggestion_content_input);
+        EditText videoUrlInput = dialogView.findViewById(R.id.suggestion_video_input);
+        EditText durationInput = dialogView.findViewById(R.id.suggestion_duration_input);
+
+        builder.setView(dialogView)
+                .setTitle("📝 Предложить урок для курса")
+                .setPositiveButton("Отправить", (dialog, which) -> {
+                    String title = titleInput.getText().toString().trim();
+                    String content = contentInput.getText().toString().trim();
+                    String videoUrl = videoUrlInput.getText().toString().trim();
+                    String duration = durationInput.getText().toString().trim();
+
+                    if (title.isEmpty() || content.isEmpty()) {
+                        Toast.makeText(this, "Заполните название и содержание", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    sendSuggestion(title, content, videoUrl, duration);
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    private void sendSuggestion(String title, String content, String videoUrl, String duration) {
+        SharedPreferences prefs = getSharedPreferences("app_prefs", MODE_PRIVATE);
+        int userId = prefs.getInt("user_id", -1);
+
+        Suggestion suggestion = new Suggestion();
+        suggestion.setCourseId(course.getId());
+        suggestion.setSuggestedBy(userId);
+        suggestion.setTitle(title);
+        suggestion.setTextContent(content);
+        suggestion.setVideoUrl(videoUrl);
+        suggestion.setDuration(duration);
+        suggestion.setStatus("pending");
+
+        nstuApi.sendSuggestion(course.getId(), suggestion).enqueue(new Callback<Suggestion>() {
+            @Override
+            public void onResponse(Call<Suggestion> call, Response<Suggestion> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(CourseDetailActivity.this, "✅ Предложение отправлено создателю курса!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(CourseDetailActivity.this, "Ошибка: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Suggestion> call, Throwable t) {
+                Toast.makeText(CourseDetailActivity.this, "Ошибка: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

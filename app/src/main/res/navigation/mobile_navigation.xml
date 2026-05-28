@@ -34,6 +34,10 @@
             android:id="@+id/action_profile_to_createCourse"
             app:destination="@id/createCourseFragment" />
 
+        <action
+            android:id="@+id/action_profile_to_suggestions"
+            app:destination="@id/suggestionsFragment" />
+
     </fragment>
 
     <fragment
@@ -72,5 +76,12 @@
             app:destination="@id/teacherLessonsFragment" />
 
     </fragment>
+
+    <!-- ========== НОВЫЙ ФРАГМЕНТ ========== -->
+    <fragment
+        android:id="@+id/suggestionsFragment"
+        android:name="com.example.brics_vm.ui.teacher.SuggestionsFragment"
+        android:label="Входящие предложения"
+        tools:layout="@layout/fragment_suggestions" />
 
 </navigation>

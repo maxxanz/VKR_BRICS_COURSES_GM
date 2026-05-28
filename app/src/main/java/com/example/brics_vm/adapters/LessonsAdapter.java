@@ -53,40 +53,61 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonVi
         holder.title.setText(lesson.getTitle());
         holder.duration.setText(lesson.getDuration() + " мин");
 
-        // Проверяем, является ли урок BRICS уроком
-        // Используем флаг в названии или отдельное поле
-        boolean isBricsLesson = lesson.getTitle() != null &&
-                (lesson.getTitle().contains("🌍") ||
-                        lesson.getTitle().toLowerCase().contains("brics") ||
-                        (position == lessons.size() - 1 && lessons.size() > 1)); // последний урок
+        // ОПРЕДЕЛЯЕМ ТИП УРОКА
+        boolean isBricsLesson = lesson.isBrics();  // Используем поле из БД
+
+        // Для обратной совместимости (если поле ещё не заполнено)
+        if (!isBricsLesson && lesson.getTitle() != null) {
+            isBricsLesson = lesson.getTitle().contains("🌍") ||
+                    lesson.getTitle().toLowerCase().contains("brics");
+        }
+
+        boolean isContribution = lesson.isContribution();
 
         if (isBricsLesson) {
-            // Показываем бейдж BRICS
+            // BRICS урок
             holder.bricsBadge.setVisibility(View.VISIBLE);
-            // Меняем цвет карточки
             holder.cardView.setCardBackgroundColor(
                     ContextCompat.getColor(context, R.color.colorAccent));
-            // Меняем иконку
             holder.lessonIcon.setImageResource(R.drawable.human);
-        } else {
+            holder.contributorInfo.setVisibility(View.GONE);  // скрываем информацию об авторе
+            holder.checkIcon.setVisibility(View.GONE);
+
+        } else if (isContribution) {
+            // Дополнительный урок от преподавателя из другой страны
             holder.bricsBadge.setVisibility(View.GONE);
             holder.cardView.setCardBackgroundColor(
-                    ContextCompat.getColor(context, android.R.color.white));
-            // Стандартная иконка для обычных уроков
+                    ContextCompat.getColor(context, R.color.colorContribution));
+
             if (completedLessonIds != null && completedLessonIds.contains(lesson.getId())) {
                 holder.lessonIcon.setImageResource(R.drawable.ic_check_circle);
             } else {
                 holder.lessonIcon.setImageResource(R.drawable.ic_play_circle);
             }
-        }
 
-        if (completedLessonIds != null && completedLessonIds.contains(lesson.getId())) {
-            holder.checkIcon.setVisibility(View.VISIBLE);
-            if (!isBricsLesson) {
-                holder.lessonIcon.setImageResource(R.drawable.ic_check_circle);
-            }
+            // Показываем информацию об авторе
+            holder.contributorInfo.setVisibility(View.VISIBLE);
+            String contributorText = "🌍 Дополнительный урок от " +
+                    lesson.getContributorFullName() +
+                    " (" + lesson.getContributorCountry() + ")";
+            holder.contributorInfo.setText(contributorText);
+            holder.checkIcon.setVisibility(completedLessonIds != null &&
+                    completedLessonIds.contains(lesson.getId()) ? View.VISIBLE : View.GONE);
+
         } else {
-            holder.checkIcon.setVisibility(View.GONE);
+            // Обычный урок
+            holder.bricsBadge.setVisibility(View.GONE);
+            holder.cardView.setCardBackgroundColor(
+                    ContextCompat.getColor(context, android.R.color.white));
+            holder.contributorInfo.setVisibility(View.GONE);
+
+            if (completedLessonIds != null && completedLessonIds.contains(lesson.getId())) {
+                holder.lessonIcon.setImageResource(R.drawable.ic_check_circle);
+                holder.checkIcon.setVisibility(View.VISIBLE);
+            } else {
+                holder.lessonIcon.setImageResource(R.drawable.ic_play_circle);
+                holder.checkIcon.setVisibility(View.GONE);
+            }
         }
 
         holder.itemView.setOnClickListener(v -> {
@@ -105,6 +126,7 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonVi
         ImageView lessonIcon, checkIcon;
         TextView title, duration;
         TextView bricsBadge;
+        TextView contributorInfo;  // ← ДОБАВИТЬ
         CardView cardView;
 
         LessonViewHolder(@NonNull View itemView) {
@@ -114,6 +136,7 @@ public class LessonsAdapter extends RecyclerView.Adapter<LessonsAdapter.LessonVi
             title = itemView.findViewById(R.id.lesson_title);
             duration = itemView.findViewById(R.id.lesson_duration);
             bricsBadge = itemView.findViewById(R.id.brics_badge);
+            contributorInfo = itemView.findViewById(R.id.contributor_info);  // ← ДОБАВИТЬ
             cardView = (CardView) itemView;
         }
     }

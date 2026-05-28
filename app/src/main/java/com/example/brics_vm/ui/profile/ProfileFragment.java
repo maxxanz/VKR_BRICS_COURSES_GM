@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-
 import com.example.brics_vm.R;
 
 public class ProfileFragment extends Fragment {
@@ -18,8 +17,10 @@ public class ProfileFragment extends Fragment {
     private TextView studentEmail;
     private TextView studentUserType;
     private TextView studentUniversity;
-    private TextView studentCountryInfo;  // ← это поле для страны
+    private TextView studentCountryInfo;
     private ImageView studentAvatar;
+    private Button createCourseButton;
+    private Button suggestionsButton;  // ← ДОБАВИТЬ
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -27,28 +28,39 @@ public class ProfileFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        // Инициализация - только существующие в XML элементы
+        // Инициализация
         studentName = root.findViewById(R.id.student_name);
         studentEmail = root.findViewById(R.id.student_email);
         studentUserType = root.findViewById(R.id.student_user_type);
         studentUniversity = root.findViewById(R.id.student_university);
-        studentCountryInfo = root.findViewById(R.id.student_country_info);  // ← страна здесь
+        studentCountryInfo = root.findViewById(R.id.student_country_info);
         studentAvatar = root.findViewById(R.id.student_avatar);
+        createCourseButton = root.findViewById(R.id.create_course_button);
+        suggestionsButton = root.findViewById(R.id.suggestions_button);  // ← НОВОЕ
 
         // Загружаем данные
         loadUserData();
 
-        Button createCourseButton = root.findViewById(R.id.create_course_button);
+        // Проверяем тип пользователя
         String userType = getActivity().getSharedPreferences("app_prefs", getContext().MODE_PRIVATE)
                 .getString("user_type", "");
 
         if ("teacher".equals(userType)) {
             createCourseButton.setVisibility(View.VISIBLE);
+            suggestionsButton.setVisibility(View.VISIBLE);  // ← НОВОЕ
+
             createCourseButton.setOnClickListener(v -> {
                 Navigation.findNavController(getView()).navigate(R.id.action_profile_to_createCourse);
             });
+
+            // ← НОВЫЙ ОБРАБОТЧИК
+            suggestionsButton.setOnClickListener(v -> {
+                Navigation.findNavController(getView()).navigate(R.id.action_profile_to_suggestions);
+            });
+
         } else {
             createCourseButton.setVisibility(View.GONE);
+            suggestionsButton.setVisibility(View.GONE);  // ← НОВОЕ
         }
 
         return root;
@@ -65,17 +77,14 @@ public class ProfileFragment extends Fragment {
         String university = prefs.getString("user_university", "");
         String userType = prefs.getString("user_type", "");
 
-        // Устанавливаем данные
         studentName.setText(firstName + " " + lastName);
         studentEmail.setText(email);
         studentUniversity.setText(university);
 
-        // Страна - через правильный TextView
         if (studentCountryInfo != null) {
             studentCountryInfo.setText(country);
         }
 
-        // Тип пользователя на русском
         switch (userType) {
             case "student":
                 studentUserType.setText("Студент");
