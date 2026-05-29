@@ -49,6 +49,10 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Suggestion s = suggestions.get(position);
 
+        // ПОКАЗЫВАЕМ НАЗВАНИЕ КУРСА
+        String courseInfo = "📘 " + s.getCourseTitle();
+        holder.courseTitle.setText(courseInfo);
+
         holder.title.setText(s.getTitle());
         holder.teacherInfo.setText("📝 от " + s.getTeacherName() + " (" + s.getCountry() + ")");
 
@@ -73,30 +77,28 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
             if (actionListener != null) actionListener.onReject(s);
         });
 
-        // ✅ КЛИК НА КАРТОЧКУ — ОТКРЫВАЕМ ПРЕДПРОСМОТР УРОКА
+        // Клик на карточку — открываем предпросмотр урока
         holder.cardView.setOnClickListener(v -> {
-            // Создаём временный объект Lesson из Suggestion
             Lesson previewLesson = new Lesson();
-            previewLesson.setId(-1);  // Временный ID, так как урок ещё не создан
+            previewLesson.setId(-1);
             previewLesson.setTitle(s.getTitle());
             previewLesson.setTextContent(s.getTextContent());
             previewLesson.setVideoUrl(s.getVideoUrl());
-            previewLesson.setDuration(parseDuration(s.getDuration()));  // Преобразуем String в int
+            previewLesson.setDuration(parseDuration(s.getDuration()));
 
             Intent intent = new Intent(context, LessonDetailActivity.class);
             intent.putExtra(LessonDetailActivity.EXTRA_LESSON, previewLesson);
             intent.putExtra(LessonDetailActivity.EXTRA_COURSE_ID, s.getCourseId());
-            intent.putExtra("is_preview_mode", true);  // Режим предпросмотра (без отметки о прохождении)
+            intent.putExtra("is_preview_mode", true);
             context.startActivity(intent);
         });
     }
 
-    // Вспомогательный метод для парсинга длительности
     private int parseDuration(String durationStr) {
         try {
             return Integer.parseInt(durationStr);
         } catch (NumberFormatException e) {
-            return 10; // Значение по умолчанию
+            return 10;
         }
     }
 
@@ -106,12 +108,14 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView courseTitle;  // ← ДОБАВИТЬ
         TextView title, teacherInfo, content, videoHint;
         Button approveBtn, rejectBtn;
         CardView cardView;
 
         ViewHolder(View itemView) {
             super(itemView);
+            courseTitle = itemView.findViewById(R.id.suggestion_course_title);  // ← ДОБАВИТЬ
             title = itemView.findViewById(R.id.suggestion_title);
             teacherInfo = itemView.findViewById(R.id.suggestion_teacher);
             content = itemView.findViewById(R.id.suggestion_content);

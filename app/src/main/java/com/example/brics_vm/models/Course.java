@@ -1,6 +1,8 @@
 package com.example.brics_vm.models;
 
 import java.io.Serializable;
+import java.util.Map;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Course implements Serializable {
@@ -35,6 +37,12 @@ public class Course implements Serializable {
 
     @SerializedName("course_number")
     private int courseNumber;
+
+    @SerializedName("profile")
+    private Map<String, Object> profile;  // или JsonObject
+
+    public Map<String, Object> getProfile() { return profile; }
+    public void setProfile(Map<String, Object> profile) { this.profile = profile; }
 
     // Пустой конструктор
     public Course() {}

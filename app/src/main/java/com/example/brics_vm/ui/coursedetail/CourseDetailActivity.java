@@ -25,6 +25,9 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import java.util.Map;
+import java.util.List;
+import android.view.View;
 
 public class CourseDetailActivity extends AppCompatActivity {
 
@@ -137,6 +140,49 @@ public class CourseDetailActivity extends AppCompatActivity {
                     .placeholder(android.R.drawable.ic_menu_gallery)
                     .error(android.R.drawable.ic_menu_gallery)
                     .into(courseImage);
+        }
+
+        // Отображаем профиль (образовательный стандарт)
+        Map<String, Object> profile = course.getProfile();
+        if (profile != null && !profile.isEmpty()) {
+            TextView standardView = findViewById(R.id.course_standard);
+            StringBuilder sb = new StringBuilder();
+            sb.append("📚 Образовательный стандарт:\n");
+            if (profile.containsKey("country")) {
+                String countryCode = (String) profile.get("country");
+                String countryName = "";
+                if ("CN".equals(countryCode)) countryName = "Китай";
+                else if ("RU".equals(countryCode)) countryName = "Россия";
+                else if ("IN".equals(countryCode)) countryName = "Индия";
+                else countryName = countryCode;
+                sb.append("Страна: ").append(countryName).append("\n");
+            }
+            if (profile.containsKey("code")) {
+                sb.append("Стандарт: ").append(profile.get("code")).append("\n");
+            }
+            if (profile.containsKey("ideological_indicators")) {
+                Object ind = profile.get("ideological_indicators");
+                if (ind instanceof List) {
+                    sb.append("Идеологические индикаторы: ").append(android.text.TextUtils.join(", ", (List<?>) ind)).append("\n");
+                } else {
+                    sb.append("Идеологические индикаторы: ").append(ind).append("\n");
+                }
+            }
+            if (profile.containsKey("competencies")) {
+                Object comp = profile.get("competencies");
+                if (comp instanceof List) {
+                    sb.append("Компетенции: ").append(android.text.TextUtils.join(", ", (List<?>) comp)).append("\n");
+                } else {
+                    sb.append("Компетенции: ").append(comp).append("\n");
+                }
+            }
+            if (profile.containsKey("assessment")) {
+                sb.append("Аттестация: ").append(profile.get("assessment")).append("\n");
+            }
+            standardView.setText(sb.toString());
+            standardView.setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.course_standard).setVisibility(View.GONE);
         }
     }
 

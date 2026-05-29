@@ -22,7 +22,7 @@ public class Suggestion implements Serializable {
     private String textContent;
 
     private String duration;
-    private String status; // pending, approved, rejected
+    private String status;
 
     @SerializedName("rejected_reason")
     private String rejectedReason;
@@ -30,7 +30,6 @@ public class Suggestion implements Serializable {
     @SerializedName("created_at")
     private String createdAt;
 
-    // Данные преподавателя (приходят из JOIN)
     @SerializedName("first_name")
     private String firstName;
 
@@ -39,6 +38,11 @@ public class Suggestion implements Serializable {
 
     @SerializedName("country")
     private String country;
+
+    // ========== НОВОЕ ПОЛЕ ==========
+    @SerializedName("course_title")
+    private String courseTitle;
+    // ================================
 
     // Геттеры и сеттеры
     public int getId() { return id; }
@@ -82,6 +86,11 @@ public class Suggestion implements Serializable {
 
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
+
+    // ========== НОВЫЙ ГЕТТЕР И СЕТТЕР ==========
+    public String getCourseTitle() { return courseTitle; }
+    public void setCourseTitle(String courseTitle) { this.courseTitle = courseTitle; }
+    // ==========================================
 
     public String getTeacherName() {
         return firstName + " " + lastName;

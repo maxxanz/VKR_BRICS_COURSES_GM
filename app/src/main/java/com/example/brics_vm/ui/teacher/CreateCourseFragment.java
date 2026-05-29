@@ -151,13 +151,13 @@ public class CreateCourseFragment extends Fragment {
         new AlertDialog.Builder(getContext())
                 .setTitle("📚 Что дальше?")
                 .setMessage("Курс создан. Как вы хотите его наполнить?")
-                .setPositiveButton("📄 ЗАГРУЗИТЬ SYLLABUS", (dialog, which) -> {
+                .setPositiveButton("📄 Загрузить файл", (dialog, which) -> {
                     pickFileForImport();
                 })
-                .setNegativeButton("✏️ ДОБАВИТЬ ВРУЧНУЮ", (dialog, which) -> {
+                .setNegativeButton("✏️ Добавить вручную", (dialog, which) -> {
                     goToLessonsEdit();
                 })
-                .setNeutralButton("❌ ПОТОМ", null)
+                .setNeutralButton("❌ Позже", null)
                 .show();
     }
 
@@ -221,8 +221,7 @@ public class CreateCourseFragment extends Fragment {
 
                         new AlertDialog.Builder(getContext())
                                 .setTitle("✅ Импорт выполнен!")
-                                .setMessage("Создано уроков: " + lessonsCount + "\n\n" +
-                                        "Теперь вы можете отредактировать каждый урок (добавить текст и видео).")
+                                .setMessage("Теперь вы можете отредактировать каждый урок (добавить текст и видео).")
                                 .setPositiveButton("ПЕРЕЙТИ К УРОКАМ", (dialog, which) -> {
                                     Bundle bundle = new Bundle();
                                     bundle.putInt("course_id", createdCourseId);
